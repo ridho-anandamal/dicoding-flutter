@@ -8,6 +8,7 @@ class ApiRestaurant {
   static const getListUrl = '/list';
   static const getImageUrl = '/images/small/';
   static const getDetailUrl = '/detail/';
+  static const getSearchUrl = '/search?q=';
 
   static Future<RestaurantDataListResult> getRestaurantList() async {
     final response = await http.get(Uri.parse('$baseUrl$getListUrl'));
@@ -24,6 +25,15 @@ class ApiRestaurant {
       return RestaurantDataDetailResult.fromJson(json.decode(response.body));
     } else {
       throw Exception('Gagal mengambil detail restaurant');
+    }
+  }
+
+  static Future<RestaurantDataListResult> getSearchList(String query) async{
+    final response = await http.get(Uri.parse('$baseUrl$getSearchUrl$query'));
+    if(response.statusCode == 200){
+      return RestaurantDataListResult.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Restaurant tidak ditemukan');
     }
   }
 }

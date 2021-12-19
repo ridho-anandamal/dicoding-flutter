@@ -7,8 +7,8 @@ class RestaurantDataListResult {
   });
 
   final bool error;
-  final String message;
-  final int count;
+  final String? message;
+  final int? count;
   final List<RestaurantDataList> restaurants;
 
   factory RestaurantDataListResult.fromJson(Map<String, dynamic> json) =>
