@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:submission_restaurant/data/common/theme_data.dart';
-import 'package:submission_restaurant/routes/routePage.dart';
+import 'package:submission_restaurant/routes/route_page.dart';
 import 'package:submission_restaurant/screen/splash_page.dart';
 
 void main() {

@@ -1,14 +1,28 @@
 import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/common/style.dart';
-import 'package:submission_restaurant/data/models/restaurant_model.dart';
+import 'package:submission_restaurant/data/models/restaurant_list.dart';
 import 'package:submission_restaurant/widget/platform_widget.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
 
-class ListPage extends StatelessWidget {
+class ListPage extends StatefulWidget {
   static const String pageName = 'Restaurant';
   const ListPage({Key? key}) : super(key: key);
+
+  @override
+  State<ListPage> createState() => _ListPageState();
+}
+
+class _ListPageState extends State<ListPage> {
+  late Future<RestaurantDataListResult> _restaurantList;
+
+  @override
+  void initState() {
+    super.initState();
+    _restaurantList = ApiRestaurant.getRestaurantList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +35,7 @@ class ListPage extends StatelessWidget {
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(pageName),
+        title: const Text(ListPage.pageName),
       ),
       body: _buildList(context),
     );
@@ -31,28 +45,44 @@ class ListPage extends StatelessWidget {
     return CupertinoPageScaffold(
       child: _buildList(context),
       navigationBar: const CupertinoNavigationBar(
-        middle: Text(pageName),
+        middle: Text(ListPage.pageName),
         transitionBetweenRoutes: false,
       ),
     );
   }
 
   Widget _buildList(context) {
-    return FutureBuilder<String>(
-      future: DefaultAssetBundle.of(context).loadString(Restaurant.jsonFile),
-      builder: (context, snapshot) {
-        final List<Restaurant> restaurants = parseRestaurant(snapshot.data);
-        return ListView.builder(
-          itemCount: restaurants.length,
-          itemBuilder: (context, index) {
-            return _buildItem(context, restaurants[index]);
-          },
-        );
+    return FutureBuilder(
+      future: _restaurantList,
+      builder: (context, AsyncSnapshot<RestaurantDataListResult> snapshot) {
+        var state = snapshot.connectionState;
+        if (state != ConnectionState.done) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data?.restaurants.length,
+              itemBuilder: (context, index) {
+                var restaurant = snapshot.data?.restaurants[index];
+                return _buildItem(context, restaurant!);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          } else {
+            return const Text('');
+          }
+        }
       },
     );
   }
 
-  Widget _buildItem(BuildContext context, Restaurant restaurant) {
+  Widget _buildItem(BuildContext context, RestaurantDataList restaurant) {
     Color _colorRating() =>
         restaurant.rating >= 4 ? Colors.green : Colors.orange;
     return Material(
@@ -64,7 +94,7 @@ class ListPage extends StatelessWidget {
         leading: Hero(
           tag: 'restaurant-hero${restaurant.id}',
           child: Image.network(
-            restaurant.pictureId,
+            '${ApiRestaurant.baseUrl}${ApiRestaurant.getImageUrl}${restaurant.pictureId}',
             width: 100.0,
             fit: BoxFit.cover,
           ),

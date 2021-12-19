@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
 import 'package:submission_restaurant/screen/home_page.dart';
