@@ -12,8 +12,6 @@ class ContainerTags extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(
         top: 20,
-        left: 20,
-        right: 20,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,7 +29,7 @@ class ContainerTags extends StatelessWidget {
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: restaurantList.map((drink) {
+            children: restaurantList.map((item) {
               return Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
@@ -40,7 +38,7 @@ class ContainerTags extends StatelessWidget {
                   color: redColor50,
                 ),
                 child: Text(
-                  drink['name'],
+                  item.name,
                   style: Theme.of(context).textTheme.caption?.copyWith(
                         color: redColor700,
                       ),

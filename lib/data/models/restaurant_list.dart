@@ -36,7 +36,7 @@ class RestaurantDataList {
   final String description;
   final String pictureId;
   final String city;
-  final dynamic rating;
+  final double rating;
 
   factory RestaurantDataList.fromJson(Map<String, dynamic> json) =>
       RestaurantDataList(
@@ -45,6 +45,6 @@ class RestaurantDataList {
         description: json['description'],
         pictureId: json['pictureId'],
         city: json['city'],
-        rating: json['rating'],
+        rating: json['rating'].toDouble(),
       );
 }

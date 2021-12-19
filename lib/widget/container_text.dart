@@ -13,8 +13,6 @@ class ContainerText extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(
         top: 20,
-        left: 20,
-        right: 20,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

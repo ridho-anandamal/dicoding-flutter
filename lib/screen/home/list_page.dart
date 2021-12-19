@@ -154,7 +154,7 @@ class _ListPageState extends State<ListPage> {
           ],
         ),
         onTap: () => Navigator.pushNamed(context, DetailPage.routeName,
-            arguments: restaurant),
+            arguments: restaurant.id),
       ),
     );
   }
