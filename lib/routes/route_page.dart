@@ -3,6 +3,7 @@ import 'package:submission_restaurant/data/models/restaurant_detail.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
 import 'package:submission_restaurant/screen/home_page.dart';
 import 'package:submission_restaurant/screen/review_restaurant_page.dart';
+import 'package:submission_restaurant/screen/search_page.dart';
 import 'package:submission_restaurant/screen/splash_page.dart';
 
 Map<String, Widget Function(BuildContext)> pageRouteList = {
@@ -15,4 +16,5 @@ Map<String, Widget Function(BuildContext)> pageRouteList = {
         restaurant:
             ModalRoute.of(context)?.settings.arguments as RestaurantDataDetail,
       ),
+  SearchPage.routeName: (context) => const SearchPage()
 };

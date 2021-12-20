@@ -4,7 +4,7 @@ import 'package:submission_restaurant/screen/home_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
-  static const String routeName = '/';
+  static const String routeName = '/splash';
 
   @override
   _SplashPageState createState() => _SplashPageState();

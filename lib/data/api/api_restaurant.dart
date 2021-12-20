@@ -12,16 +12,12 @@ class ApiRestaurant {
   static const postReviewUrl = '/review';
 
   static Future<RestaurantDataListResult> getRestaurantList() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl$getListUrl'));
+    final response = await http.get(Uri.parse('$baseUrl$getListUrl'));
       if (response.statusCode == 200) {
         return RestaurantDataListResult.fromJson(json.decode(response.body));
       } else {
         throw Exception('Gagal mengambil list restaurant');
       }
-    } catch (error) {
-      throw Exception('Koneksi terputus. Data tidak ditemukan');
-    }
   }
 
   static Future<RestaurantDataDetailResult> getRestaurantDetail(

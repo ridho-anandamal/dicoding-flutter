@@ -7,7 +7,7 @@ import 'dart:io' show Platform;
 import 'package:submission_restaurant/widget/platform_widget.dart';
 
 class HomePage extends StatefulWidget {
-  static const String routeName = '/home-page';
+  static const String routeName = '/home';
   const HomePage({Key? key}) : super(key: key);
 
   @override

@@ -4,151 +4,118 @@ import 'package:flutter/material.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_list.dart';
-import 'package:submission_restaurant/widget/platform_widget.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
+import 'package:submission_restaurant/screen/search_page.dart';
+import 'package:submission_restaurant/utilities/provider/restaurant_list_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:submission_restaurant/widget/platform_widget.dart';
 
-class ListPage extends StatefulWidget {
+class ListPage extends StatelessWidget {
   static const String pageName = 'Restaurant';
   const ListPage({Key? key}) : super(key: key);
 
   @override
-  State<ListPage> createState() => _ListPageState();
-}
-
-class _ListPageState extends State<ListPage> {
-  late Future<RestaurantDataListResult> _restaurantList;
-  bool _isSearching = false;
-  bool _isGridView = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _restaurantList = ApiRestaurant.getRestaurantList();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
+    return ChangeNotifierProvider<RestaurantListProvider>(
+      create: (context) => RestaurantListProvider(),
+      child: PlatformWidget(
+        androidBuilder: _buildAndroid,
+        iosBuilder: _buildIos,
+      ),
     );
   }
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isSearching
-            ? TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Cari Restaurant',
-                ),
-                onSubmitted: (value) {
-                  setState(() {
-                    _restaurantList = ApiRestaurant.getSearchList(value);
-                  });
-                },
-              )
-            : const Text(ListPage.pageName),
-        leading: _isSearching
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  setState(() {
-                    _isSearching = false;
-                    _restaurantList = ApiRestaurant.getRestaurantList();
-                  });
-                },
-              )
-            : null,
-        actions: _isSearching
-            ? [Container()]
-            : [
-                IconButton(
-                  icon: const Icon(Icons.search_rounded),
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = true;
-                    });
-                  },
-                ),
-                _isGridView
-                    ? IconButton(
-                        icon: const Icon(Icons.grid_view_rounded),
-                        onPressed: () {
-                          setState(() => _isGridView = false);
-                        },
-                      )
-                    : IconButton(
-                        icon: const Icon(Icons.view_list),
-                        onPressed: () {
-                          setState(() => _isGridView = true);
-                        },
+        title: const Text(pageName),
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.pushNamed(context, SearchPage.routeName),
+            icon: const Icon(
+              Icons.search_rounded,
+            ),
+          ),
+          Consumer<RestaurantListProvider>(
+            builder: (context, restaurantListProvider, _) {
+              return restaurantListProvider.isGridView
+                  ? IconButton(
+                      onPressed: () =>
+                          restaurantListProvider.isGridView = false,
+                      icon: const Icon(
+                        Icons.view_list,
                       ),
-              ],
+                    )
+                  : IconButton(
+                      onPressed: () => restaurantListProvider.isGridView = true,
+                      icon: const Icon(
+                        Icons.grid_view_rounded,
+                      ),
+                    );
+            },
+          ),
+        ],
       ),
-      body: _buildList(context),
+      body: _getRestaurantData(context),
     );
   }
 
-  Widget _buildIos(BuildContext context) {
+  Widget _buildIos(BuildContext context){
     return CupertinoPageScaffold(
-      child: _buildList(context),
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text(ListPage.pageName),
-        transitionBetweenRoutes: false,
-      ),
+      child: _getRestaurantData(context),
     );
   }
 
-  Widget _buildList(context) {
-    return FutureBuilder(
-      future: _restaurantList,
-      builder: (context, AsyncSnapshot<RestaurantDataListResult> snapshot) {
-        var state = snapshot.connectionState;
-        if (state != ConnectionState.done) {
+  Widget _getRestaurantData(BuildContext context) {
+    return Consumer<RestaurantListProvider>(
+      builder: (context, restaurantListProvider, _) {
+        if (restaurantListProvider.state == ResultState.loading) {
           return const Center(
             child: CircularProgressIndicator(color: redColor500),
           );
-        } else {
-          if (snapshot.hasData) {
-            var restaurants = snapshot.data?.restaurants;
-            return _isGridView
-                ? _buildItemGridView(context, restaurants!)
-                : _buildItemListView(context, restaurants!);
-          } else if (snapshot.hasError) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/illustration/not-found.png',
-                      width: 200,
-                      height: 200,
-                    ),
-                    Text(
-                      snapshot.error.toString().substring(10),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    const SizedBox(
-                      height: 12.0,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _restaurantList = ApiRestaurant.getRestaurantList();
-                          });
-                        },
-                        child: const Text('Muat Ulang'))
-                  ],
-                ),
+        } else if (restaurantListProvider.state == ResultState.hasData) {
+          var restaurants = restaurantListProvider.dataListResult!.restaurants;
+          return restaurantListProvider.isGridView
+              ? _buildItemGridView(context, restaurants)
+              : _buildItemListView(context, restaurants);
+        } else if (restaurantListProvider.state == ResultState.error) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/illustration/not-found.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                  Text(
+                    restaurantListProvider.message.toString(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  const SizedBox(
+                    height: 12.0,
+                  ),
+                  ElevatedButton(
+                      onPressed: () =>
+                          restaurantListProvider.refreshData,
+                      child: const Text('Muat Ulang'))
+                ],
               ),
-            );
-          } else {
-            return const Text('');
-          }
+            ),
+          );
+        } else if (restaurantListProvider.state == ResultState.hasData) {
+          return Center(
+            child: Text(
+              restaurantListProvider.message.toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          );
+        } else {
+          return const Text('');
         }
       },
     );

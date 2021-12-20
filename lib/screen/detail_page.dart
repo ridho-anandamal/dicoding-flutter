@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_detail.dart';
 import 'package:submission_restaurant/screen/review_restaurant_page.dart';
+import 'package:submission_restaurant/utilities/provider/restaurant_detail_provider.dart';
 import 'package:submission_restaurant/widget/component_tags.dart';
 import 'package:submission_restaurant/widget/container_bottom.dart';
 import 'package:submission_restaurant/widget/container_review.dart';
@@ -11,35 +13,20 @@ import 'package:submission_restaurant/widget/platform_widget.dart';
 import 'package:submission_restaurant/widget/container_tags.dart';
 import 'package:submission_restaurant/widget/container_text.dart';
 
-class DetailPage extends StatefulWidget {
-  static const String routeName = '/detail-page';
+class DetailPage extends StatelessWidget {
+  static const String routeName = '/detail';
   static const String pageName = 'Detail';
   final String idRestaurant;
-
   const DetailPage({Key? key, required this.idRestaurant}) : super(key: key);
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
-}
-
-class _DetailPageState extends State<DetailPage> {
-  late Future<RestaurantDataDetailResult> _detailResult;
-  bool isLiked = false;
-  Color _colorRating() => isLiked ? Colors.green : Colors.orange;
-  Color _colorIsLikedBackground() => isLiked ? redColor500 : redColor50;
-  Color _colorIsLikedText() => isLiked ? Colors.white : redColor500;
-
-  @override
-  void initState() {
-    super.initState();
-    _detailResult = ApiRestaurant.getRestaurantDetail(widget.idRestaurant);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
+    return ChangeNotifierProvider<RestaurantDetailProvider>(
+      create: (context) => RestaurantDetailProvider(idRestaurant: idRestaurant),
+      child: PlatformWidget(
+        androidBuilder: _buildAndroid,
+        iosBuilder: _buildIos,
+      ),
     );
   }
 
@@ -52,7 +39,7 @@ class _DetailPageState extends State<DetailPage> {
         ),
         title: const Text(DetailPage.pageName),
       ),
-      body: _detailFutureBuilder(context),
+      body: _getDetailRestaurant(context),
     );
   }
 
@@ -61,57 +48,57 @@ class _DetailPageState extends State<DetailPage> {
       navigationBar: const CupertinoNavigationBar(
         middle: Text(DetailPage.pageName),
       ),
-      child: _detailFutureBuilder(context),
+      child: _getDetailRestaurant(context),
     );
   }
 
-  Widget _detailFutureBuilder(BuildContext context) {
-    return FutureBuilder(
-      future: _detailResult,
-      builder: (context, AsyncSnapshot<RestaurantDataDetailResult> snapshot) {
-        var state = snapshot.connectionState;
-        if (state != ConnectionState.done) {
+  Widget _getDetailRestaurant(BuildContext context) {
+    return Consumer<RestaurantDetailProvider>(
+      builder: (context, restaurantDetailProvider, _) {
+        if (restaurantDetailProvider.state == ResultState.loading) {
           return const Center(
             child: CircularProgressIndicator(color: redColor500),
           );
-        } else {
-          if (snapshot.hasData) {
-            return _detailBuilder(context, snapshot.data!.restaurant);
-          } else if (snapshot.hasError) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/illustration/not-found.png',
-                      width: 200,
-                      height: 200,
-                    ),
-                    Text(
-                      snapshot.error.toString().substring(10),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    const SizedBox(
-                      height: 12.0,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _detailResult = ApiRestaurant.getRestaurantDetail(
-                                widget.idRestaurant);
-                          });
-                        },
-                        child: const Text('Muat Ulang'))
-                  ],
-                ),
+        } else if (restaurantDetailProvider.state == ResultState.hasData) {
+          return _detailBuilder(
+              context, restaurantDetailProvider.dataListResult!.restaurant);
+        } else if (restaurantDetailProvider.state == ResultState.error) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/illustration/not-found.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                  Text(
+                    restaurantDetailProvider.message.toString(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  const SizedBox(
+                    height: 12.0,
+                  ),
+                  ElevatedButton(
+                      onPressed: () => restaurantDetailProvider.refreshData,
+                      child: const Text('Muat Ulang'))
+                ],
               ),
-            );
-          } else {
-            return const Text('');
-          }
+            ),
+          );
+        } else if (restaurantDetailProvider.state == ResultState.hasData) {
+          return Center(
+            child: Text(
+              restaurantDetailProvider.message.toString(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          );
+        } else {
+          return const Text('');
         }
       },
     );
@@ -165,11 +152,16 @@ class _DetailPageState extends State<DetailPage> {
                     const SizedBox(
                       height: 16.0,
                     ),
-                    ComponentTagText(
-                      text: '★ ${restaurant.rating}',
-                      backgroundColor: _colorRating(),
-                      textColor: Colors.white,
-                    ),
+                    Consumer<RestaurantDetailProvider>(
+                        builder: (context, restaurantDataProvider, _) {
+                      return ComponentTagText(
+                        text: '★ ${restaurant.rating}',
+                        backgroundColor: restaurant.rating >= 4
+                            ? Colors.green
+                            : Colors.orange,
+                        textColor: Colors.white,
+                      );
+                    }),
                     ContainerText(
                       title: 'Deskripsi',
                       restaurantString: restaurant.description,
@@ -197,53 +189,60 @@ class _DetailPageState extends State<DetailPage> {
             ],
           ),
         ),
-        ContainerBottom(
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(_colorIsLikedBackground()),
-                    foregroundColor:
-                        MaterialStateProperty.all(_colorIsLikedText()),
-                    elevation: MaterialStateProperty.all(0),
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 12.0),
+        Consumer<RestaurantDetailProvider>(
+            builder: (context, restaurantDetailProvider, _) {
+          return ContainerBottom(
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          restaurantDetailProvider.colorIsLikedBackground),
+                      foregroundColor: MaterialStateProperty.all(
+                          restaurantDetailProvider.colorIsLikedText),
+                      elevation: MaterialStateProperty.all(0),
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12.0),
+                      ),
+                      overlayColor: MaterialStateProperty.all(redColor100),
                     ),
-                    overlayColor: MaterialStateProperty.all(redColor100),
+                    onPressed: () {
+                      if (restaurantDetailProvider.isLiked == false) {
+                        restaurantDetailProvider.isLiked = true;
+                      } else {
+                        restaurantDetailProvider.isLiked = false;
+                      }
+                    },
+                    child: const Text('Sukai'),
                   ),
-                  onPressed: () {},
-                  child: const Text('Sukai'),
                 ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                    overlayColor: MaterialStateProperty.all(Colors.green[600]),
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                    elevation: MaterialStateProperty.all(0),
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 12.0),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                      overlayColor:
+                          MaterialStateProperty.all(Colors.green[600]),
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      elevation: MaterialStateProperty.all(0),
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(vertical: 12.0),
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, ReviewRestaurantPage.routeName,
+                          arguments: restaurant);
+                      restaurantDetailProvider.refreshData;
+                    },
+                    child: const Text('Beri Review'),
                   ),
-                  onPressed: () async {
-                    await Navigator.pushNamed(
-                        context, ReviewRestaurantPage.routeName,
-                        arguments: restaurant);
-                    setState(() {
-                      _detailResult = ApiRestaurant.getRestaurantDetail(
-                          widget.idRestaurant);
-                    });
-                  },
-                  child: const Text('Beri Review'),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
