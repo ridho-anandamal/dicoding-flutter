@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_detail.dart';
+import 'package:submission_restaurant/screen/review_restaurant_page.dart';
 import 'package:submission_restaurant/widget/component_tags.dart';
 import 'package:submission_restaurant/widget/container_bottom.dart';
 import 'package:submission_restaurant/widget/container_review.dart';
@@ -12,7 +13,7 @@ import 'package:submission_restaurant/widget/container_text.dart';
 
 class DetailPage extends StatefulWidget {
   static const String routeName = '/detail-page';
-  static const String pageName = 'Detail Restaurant';
+  static const String pageName = 'Detail';
   final String idRestaurant;
 
   const DetailPage({Key? key, required this.idRestaurant}) : super(key: key);
@@ -49,6 +50,7 @@ class _DetailPageState extends State<DetailPage> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
+        title: const Text(DetailPage.pageName),
       ),
       body: _detailFutureBuilder(context),
     );
@@ -70,14 +72,42 @@ class _DetailPageState extends State<DetailPage> {
         var state = snapshot.connectionState;
         if (state != ConnectionState.done) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: redColor500),
           );
         } else {
           if (snapshot.hasData) {
             return _detailBuilder(context, snapshot.data!.restaurant);
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/illustration/not-found.png',
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text(
+                      snapshot.error.toString().substring(10),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    const SizedBox(
+                      height: 12.0,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _detailResult = ApiRestaurant.getRestaurantDetail(
+                                widget.idRestaurant);
+                          });
+                        },
+                        child: const Text('Muat Ulang'))
+                  ],
+                ),
+              ),
             );
           } else {
             return const Text('');
@@ -199,7 +229,15 @@ class _DetailPageState extends State<DetailPage> {
                       const EdgeInsets.symmetric(vertical: 12.0),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await Navigator.pushNamed(
+                        context, ReviewRestaurantPage.routeName,
+                        arguments: restaurant);
+                    setState(() {
+                      _detailResult = ApiRestaurant.getRestaurantDetail(
+                          widget.idRestaurant);
+                    });
+                  },
                   child: const Text('Beri Review'),
                 ),
               ),

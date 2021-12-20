@@ -15,52 +15,52 @@ const Color whiteColor = Colors.white;
 const Color greyColor = Colors.grey;
 const Color blackColor = Colors.black;
 
-const String _plusJakartaSans = 'Plus Jakarta Sans';
+const String plusJakartaSans = 'Plus Jakarta Sans';
 const TextTheme myTextTheme = TextTheme(
   headline4: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 28,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.25,
     color: Colors.black
   ),
   headline5: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 24,
     fontWeight: FontWeight.w700,
   ),
   headline6: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 20,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.15,
   ),
   subtitle1: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.15,
   ),
   subtitle2: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.1,
   ),
   bodyText1: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.5,
   ),
   bodyText2: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     letterSpacing: 0.25,
   ),
   caption: TextStyle(
-    fontFamily: _plusJakartaSans,
+    fontFamily: plusJakartaSans,
     fontSize: 12,
     fontWeight: FontWeight.w600,
   ),

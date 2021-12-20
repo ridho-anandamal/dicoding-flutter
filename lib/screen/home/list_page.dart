@@ -107,7 +107,7 @@ class _ListPageState extends State<ListPage> {
         var state = snapshot.connectionState;
         if (state != ConnectionState.done) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: redColor500),
           );
         } else {
           if (snapshot.hasData) {
@@ -116,8 +116,35 @@ class _ListPageState extends State<ListPage> {
                 ? _buildItemGridView(context, restaurants!)
                 : _buildItemListView(context, restaurants!);
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/illustration/not-found.png',
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text(
+                      snapshot.error.toString().substring(10),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    const SizedBox(
+                      height: 12.0,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _restaurantList = ApiRestaurant.getRestaurantList();
+                          });
+                        },
+                        child: const Text('Muat Ulang'))
+                  ],
+                ),
+              ),
             );
           } else {
             return const Text('');
@@ -152,9 +179,7 @@ class _ListPageState extends State<ListPage> {
             title: Text(
               restaurant[index].name,
               style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    overflow: TextOverflow.ellipsis
-                  ),
+                  fontWeight: FontWeight.w700, overflow: TextOverflow.ellipsis),
             ),
             subtitle: Column(
               children: [
@@ -238,7 +263,7 @@ class _ListPageState extends State<ListPage> {
                   child: Image.network(
                     '${ApiRestaurant.baseUrl}${ApiRestaurant.getImageUrl}${restaurant.pictureId}',
                     width: double.infinity,
-                    height: 80,
+                    height: 100,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -250,9 +275,8 @@ class _ListPageState extends State<ListPage> {
                       Text(
                         restaurant.name,
                         style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              overflow: TextOverflow.ellipsis
-                            ),
+                            fontWeight: FontWeight.w700,
+                            overflow: TextOverflow.ellipsis),
                       ),
                       const SizedBox(height: 6),
                       Row(

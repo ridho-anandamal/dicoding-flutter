@@ -32,6 +32,26 @@ ThemeData themeData(BuildContext context) {
     ),
     listTileTheme: const ListTileThemeData(
       tileColor: whiteColor,
-    )
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+      elevation: MaterialStateProperty.all(0),
+      backgroundColor: MaterialStateProperty.all(redColor100),
+      foregroundColor: MaterialStateProperty.all(redColor500),
+    )),
+    inputDecorationTheme: InputDecorationTheme(
+      border:
+          const OutlineInputBorder(borderSide: BorderSide(color: blackColor)),
+      focusedBorder:
+          const OutlineInputBorder(borderSide: BorderSide(color: redColor500)),
+      enabledBorder:
+          const OutlineInputBorder(borderSide: BorderSide(color: blackColor)),
+      hintStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+            fontFamily: plusJakartaSans,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0.5,
+          ),
+    ),
   );
 }
