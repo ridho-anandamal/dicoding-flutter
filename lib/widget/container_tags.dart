@@ -4,7 +4,8 @@ import 'package:submission_restaurant/data/common/style.dart';
 class ContainerTags extends StatelessWidget {
   final List restaurantList;
   final String title;
-  const ContainerTags({required this.title, required this.restaurantList, Key? key})
+  const ContainerTags(
+      {required this.title, required this.restaurantList, Key? key})
       : super(key: key);
 
   @override
@@ -17,12 +18,7 @@ class ContainerTags extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headline6?.copyWith(
-                  color: blackColor,
-                ),
-          ),
+          Text(title, style: Theme.of(context).textTheme.headline6),
           const SizedBox(
             height: 12.0,
           ),

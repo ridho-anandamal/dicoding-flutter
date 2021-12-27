@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
-import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_detail.dart';
-
-enum ResultState { loading, noData, hasData, error }
+import 'package:submission_restaurant/utilities/helper/enum_result_state.dart';
 
 class RestaurantDetailProvider extends ChangeNotifier {
   RestaurantDetailProvider({required this.idRestaurant}) {
@@ -15,7 +13,6 @@ class RestaurantDetailProvider extends ChangeNotifier {
   RestaurantDataDetailResult? _dataDetailResult;
   ResultState? _resultState;
   late String _message = '';
-  bool _isLiked = false;
 
   String get message => _message;
   RestaurantDataDetailResult? get dataListResult => _dataDetailResult;
@@ -25,14 +22,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     notifyListeners();
     return;
   }
-  set isLiked(value){
-    _isLiked = value;
-    notifyListeners();
-  }
-  bool get isLiked => _isLiked;
-  Color get colorRating => _isLiked ? Colors.green : Colors.orange;
-  Color get colorIsLikedBackground => _isLiked ? redColor500 : redColor50;
-  Color get colorIsLikedText => _isLiked ? Colors.white : redColor500;
+
 
   Future<dynamic> _getDetailRestaurant() async {
     try {

@@ -74,7 +74,7 @@ class _ReviewRestaurantPageState extends State<ReviewRestaurantPage> {
                             await ApiRestaurant.postReview(
                                 name: _nameValue!,
                                 review: _reviewValue!,
-                                id: widget.restaurant.id);
+                                id: widget.restaurant.id!);
                             SnackBar snackBar = const SnackBar(
                                 content: Text('Memberikan review berhasil'));
                             ScaffoldMessenger.of(context)
@@ -156,7 +156,7 @@ class _ReviewRestaurantPageState extends State<ReviewRestaurantPage> {
                             await ApiRestaurant.postReview(
                                 name: _nameValue!,
                                 review: _reviewValue!,
-                                id: widget.restaurant.id);
+                                id: widget.restaurant.id!);
                             SnackBar snackBar = const SnackBar(
                                 content: Text('Memberikan review berhasil'));
                             ScaffoldMessenger.of(context)

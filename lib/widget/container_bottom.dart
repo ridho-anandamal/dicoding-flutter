@@ -12,13 +12,13 @@ class ContainerBottom extends StatelessWidget {
       bottom: 0,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               offset: Offset(0, -1),
               blurRadius: 5,

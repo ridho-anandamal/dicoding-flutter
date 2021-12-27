@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:submission_restaurant/data/common/style.dart';
 
 class ContainerText extends StatelessWidget {
   final String restaurantString;
@@ -19,10 +18,7 @@ class ContainerText extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(color: blackColor),
+            style: Theme.of(context).textTheme.headline6,
           ),
           const SizedBox(
             height: 12.0,
@@ -30,7 +26,6 @@ class ContainerText extends StatelessWidget {
           Text(
             restaurantString,
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  color: blackColor,
                   height: 1.6,
                 ),
           ),

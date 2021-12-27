@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/models/restaurant_list.dart';
-
-enum ResultState { loading, noData, hasData, error }
+import 'package:submission_restaurant/utilities/helper/enum_result_state.dart';
 
 class RestaurantListProvider extends ChangeNotifier {
   RestaurantListProvider() {

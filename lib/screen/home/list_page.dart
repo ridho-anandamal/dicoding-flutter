@@ -6,6 +6,7 @@ import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_list.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
 import 'package:submission_restaurant/screen/search_page.dart';
+import 'package:submission_restaurant/utilities/helper/enum_result_state.dart';
 import 'package:submission_restaurant/utilities/provider/restaurant_list_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:submission_restaurant/widget/platform_widget.dart';
@@ -60,7 +61,7 @@ class ListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIos(BuildContext context){
+  Widget _buildIos(BuildContext context) {
     return CupertinoPageScaffold(
       child: _getRestaurantData(context),
     );
@@ -99,8 +100,7 @@ class ListPage extends StatelessWidget {
                     height: 12.0,
                   ),
                   ElevatedButton(
-                      onPressed: () =>
-                          restaurantListProvider.refreshData,
+                      onPressed: () => restaurantListProvider.refreshData,
                       child: const Text('Muat Ulang'))
                 ],
               ),
@@ -159,7 +159,6 @@ class ListPage extends StatelessWidget {
                             ? CupertinoIcons.location
                             : Icons.location_city,
                         size: 16.0,
-                        color: greyColor,
                       ),
                       const SizedBox(
                         width: 4.0,
@@ -261,7 +260,10 @@ class ListPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               'Kota ${restaurant.city}',
-                              style: Theme.of(context).textTheme.caption,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(color: greyColor),
                             ),
                           ),
                         ],

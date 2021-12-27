@@ -15,32 +15,38 @@ class RestaurantDataDetailResult {
         message: json['message'],
         restaurant: RestaurantDataDetail.fromJson(json['restaurant']),
       );
+
+  Map<String, dynamic> toJson() => {
+        'error': error,
+        'message': message,
+        'restaurant': restaurant,
+      };
 }
 
 class RestaurantDataDetail {
   RestaurantDataDetail({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.city,
-    required this.address,
-    required this.pictureId,
-    required this.rating,
-    required this.categories,
-    required this.menus,
-    required this.customerReviews,
+    this.id,
+    this.name,
+    this.description,
+    this.city,
+    this.address,
+    this.pictureId,
+    this.rating,
+    this.categories,
+    this.menus,
+    this.customerReviews,
   });
 
-  final String id;
-  final String name;
-  final String description;
-  final String city;
-  final String address;
-  final String pictureId;
-  final double rating;
-  final List<Category> categories;
-  final Menus menus;
-  final List<CustomerReview> customerReviews;
+  final String? id;
+  final String? name;
+  final String? description;
+  final String? city;
+  final String? address;
+  final String? pictureId;
+  final double? rating;
+  final List<Category>? categories;
+  final Menus? menus;
+  final List<CustomerReview>? customerReviews;
 
   factory RestaurantDataDetail.fromJson(Map<String, dynamic> json) =>
       RestaurantDataDetail(
@@ -57,6 +63,36 @@ class RestaurantDataDetail {
         customerReviews: List<CustomerReview>.from(json['customerReviews']
             .map((item) => CustomerReview.fromJson(item))),
       );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'city': city,
+        'address': address,
+        'pictureId': pictureId,
+        'categories': List<dynamic>.from(categories!.map((x) => x.toJson())),
+        'rating': rating,
+        'customerReviews':
+            List<dynamic>.from(customerReviews!.map((x) => x.toJson()))
+      };
+
+  factory RestaurantDataDetail.fromJsonFavorite(Map<String, dynamic> json) =>
+      RestaurantDataDetail(
+        id: json['id'],
+        name: json['name'],
+        city: json['city'],
+        pictureId: json['pictureId'],
+        rating: json['rating'].toDouble(),
+      );
+
+  Map<String, dynamic> toJsonFavorite() => {
+        'id': id,
+        'name': name,
+        'city': city,
+        'pictureId': pictureId,
+        'rating': rating,
+      };
 }
 
 class Category {
@@ -68,6 +104,10 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) =>
       Category(name: json['name']);
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+      };
 }
 
 class CustomerReview {
@@ -86,6 +126,12 @@ class CustomerReview {
         review: json['review'],
         date: json['date'],
       );
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'review': review,
+        'date': date,
+      };
 }
 
 class Menus {

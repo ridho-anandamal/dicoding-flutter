@@ -6,6 +6,7 @@ import 'package:submission_restaurant/data/api/api_restaurant.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_list.dart';
 import 'package:submission_restaurant/screen/detail_page.dart';
+import 'package:submission_restaurant/utilities/helper/enum_result_state.dart';
 import 'package:submission_restaurant/utilities/provider/restaurant_search_provider.dart';
 import 'package:submission_restaurant/widget/platform_widget.dart';
 

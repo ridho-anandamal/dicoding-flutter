@@ -15,6 +15,8 @@ const Color whiteColor = Colors.white;
 const Color greyColor = Colors.grey;
 const Color blackColor = Colors.black;
 
+const Color darkModeBlackColor = Color(0xFF1A1A1A);
+
 const String plusJakartaSans = 'Plus Jakarta Sans';
 const TextTheme myTextTheme = TextTheme(
   headline4: TextStyle(
@@ -22,7 +24,6 @@ const TextTheme myTextTheme = TextTheme(
     fontSize: 28,
     fontWeight: FontWeight.w700,
     letterSpacing: 0.25,
-    color: Colors.black
   ),
   headline5: TextStyle(
     fontFamily: plusJakartaSans,
