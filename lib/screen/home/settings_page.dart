@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:submission_restaurant/utilities/helper/notification_helper.dart';
 import 'package:submission_restaurant/utilities/provider/preferences_settings_provider.dart';
+import 'package:submission_restaurant/utilities/provider/scheduling_notification_provider.dart';
+
+import '../../main.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -28,14 +32,19 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               Material(
-                child: ListTile(
-                  title: const Text('Active Notification'),
-                  trailing: Switch.adaptive(
-                    value: preferencesSettings.isDailyNotificationActive,
-                    onChanged: (value) {
-                      preferencesSettings.enableDailyNotification(value);
-                    },
-                  ),
+                child: Consumer<SchedulingProvider>(
+                  builder: (context, schedulerNotification, _) {
+                    return ListTile(
+                      title: const Text('Active Notification'),
+                      trailing: Switch.adaptive(
+                        value: preferencesSettings.isDailyNotificationActive,
+                        onChanged: (value) {
+                          schedulerNotification.scheduledNews(value);
+                          preferencesSettings.enableDailyNotification(value);
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
               Material(
@@ -44,9 +53,15 @@ class SettingsPage extends StatelessWidget {
                   trailing: TextButton(
                     child: Text(
                       'Try Notification',
-                      style: TextStyle(color: preferencesSettings.isDarkTheme ? Colors.white : Colors.black),
+                      style: TextStyle(
+                          color: preferencesSettings.isDarkTheme
+                              ? Colors.white
+                              : Colors.black),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      NotificationHelper _notificationHelper = NotificationHelper();
+                      _notificationHelper.tryNotification(flutterLocalNotificationsPlugin, 'Hello There!', 'This is example notification');
+                    },
                   ),
                 ),
               ),

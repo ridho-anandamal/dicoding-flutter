@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
+import 'package:submission_restaurant/data/common/navigation.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_detail.dart';
 import 'package:submission_restaurant/widget/platform_widget.dart';
@@ -80,7 +81,7 @@ class _ReviewRestaurantPageState extends State<ReviewRestaurantPage> {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
                             Future.delayed(const Duration(seconds: 2),
-                                () => Navigator.pop(context));
+                                () => Navigation.back());
                           } catch (error) {
                             SnackBar snackBar = const SnackBar(
                                 content: Text('Gagal memberikan review'));
@@ -162,7 +163,7 @@ class _ReviewRestaurantPageState extends State<ReviewRestaurantPage> {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
                             Future.delayed(const Duration(seconds: 2),
-                                () => Navigator.pop(context));
+                                () => Navigation.back());
                           } catch (error) {
                             SnackBar snackBar = const SnackBar(
                                 content: Text('Gagal memberikan review'));

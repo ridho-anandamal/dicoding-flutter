@@ -1,14 +1,13 @@
-import 'dart:io' show Platform;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:submission_restaurant/data/api/api_restaurant.dart';
+import 'package:submission_restaurant/data/common/navigation.dart';
 import 'package:submission_restaurant/data/common/style.dart';
-import 'package:submission_restaurant/data/models/restaurant_list.dart';
-import 'package:submission_restaurant/screen/detail_page.dart';
 import 'package:submission_restaurant/screen/search_page.dart';
 import 'package:submission_restaurant/utilities/helper/enum_result_state.dart';
 import 'package:submission_restaurant/utilities/provider/restaurant_list_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:submission_restaurant/widget/item_grid_view.dart';
+import 'package:submission_restaurant/widget/item_list_view.dart';
 import 'package:submission_restaurant/widget/platform_widget.dart';
 
 class ListPage extends StatelessWidget {
@@ -32,7 +31,8 @@ class ListPage extends StatelessWidget {
         title: const Text(pageName),
         actions: [
           IconButton(
-            onPressed: () => Navigator.pushNamed(context, SearchPage.routeName),
+            onPressed: () =>
+                Navigation.intentWithData(SearchPage.routeName, ''),
             icon: const Icon(
               Icons.search_rounded,
             ),
@@ -77,8 +77,8 @@ class ListPage extends StatelessWidget {
         } else if (restaurantListProvider.state == ResultState.hasData) {
           var restaurants = restaurantListProvider.dataListResult!.restaurants;
           return restaurantListProvider.isGridView
-              ? _buildItemGridView(context, restaurants)
-              : _buildItemListView(context, restaurants);
+              ? ItemGridView(restaurants: restaurants)
+              : ItemListView(restaurants: restaurants);
         } else if (restaurantListProvider.state == ResultState.error) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -118,186 +118,6 @@ class ListPage extends StatelessWidget {
           return const Text('');
         }
       },
-    );
-  }
-
-  Widget _buildItemListView(
-      BuildContext context, List<RestaurantDataList> restaurant) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: restaurant.length,
-      itemBuilder: (context, index) {
-        Color _colorRating() =>
-            restaurant[index].rating >= 4 ? Colors.green : Colors.orange;
-        return Material(
-          child: ListTile(
-            minLeadingWidth: 100,
-            minVerticalPadding: 10,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            leading: Hero(
-              tag: 'restaurant-hero${restaurant[index].id}',
-              child: Image.network(
-                '${ApiRestaurant.baseUrl}${ApiRestaurant.getImageUrl}${restaurant[index].pictureId}',
-                width: 120.0,
-                fit: BoxFit.cover,
-              ),
-            ),
-            title: Text(
-              restaurant[index].name,
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  fontWeight: FontWeight.w700, overflow: TextOverflow.ellipsis),
-            ),
-            subtitle: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Platform.isIOS
-                            ? CupertinoIcons.location
-                            : Icons.location_city,
-                        size: 16.0,
-                      ),
-                      const SizedBox(
-                        width: 4.0,
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Kota ${restaurant[index].city}',
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Platform.isIOS ? CupertinoIcons.star : Icons.star,
-                      size: 16.0,
-                      color: _colorRating(),
-                    ),
-                    const SizedBox(
-                      width: 4.0,
-                    ),
-                    Expanded(
-                      child: Text(
-                        '${restaurant[index].rating}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption
-                            ?.copyWith(color: _colorRating()),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            onTap: () => Navigator.pushNamed(context, DetailPage.routeName,
-                arguments: restaurant[index].id),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildItemGridView(
-      BuildContext context, List<RestaurantDataList> restaurants) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: GridView.count(
-        childAspectRatio: 10 / 12,
-        crossAxisCount: 2,
-        mainAxisSpacing: 12.0,
-        crossAxisSpacing: 12.0,
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: restaurants.map((restaurant) {
-          Color _colorRating() =>
-              restaurant.rating >= 4 ? Colors.green : Colors.orange;
-
-          return InkWell(
-            onTap: () => Navigator.pushNamed(context, DetailPage.routeName,
-                arguments: restaurant.id),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Hero(
-                  tag: 'restaurant-hero${restaurant.id}',
-                  child: Image.network(
-                    '${ApiRestaurant.baseUrl}${ApiRestaurant.getImageUrl}${restaurant.pictureId}',
-                    width: double.infinity,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        restaurant.name,
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(
-                            Platform.isIOS
-                                ? CupertinoIcons.location
-                                : Icons.location_city,
-                            size: 16.0,
-                            color: greyColor,
-                          ),
-                          const SizedBox(
-                            width: 4.0,
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Kota ${restaurant.city}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(color: greyColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(
-                            Platform.isIOS ? CupertinoIcons.star : Icons.star,
-                            size: 16.0,
-                            color: _colorRating(),
-                          ),
-                          const SizedBox(
-                            width: 4.0,
-                          ),
-                          Expanded(
-                            child: Text(
-                              '${restaurant.rating}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(color: _colorRating()),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 }

@@ -71,7 +71,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: darkModeBlackColor,
-    selectedItemColor: redColor200,
+    selectedItemColor: redColor300,
     unselectedItemColor: greyColor,
     enableFeedback: false,
     selectedIconTheme: IconThemeData(size: 20),

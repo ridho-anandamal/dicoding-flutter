@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:submission_restaurant/data/api/api_restaurant.dart';
+import 'package:submission_restaurant/data/common/navigation.dart';
 import 'package:submission_restaurant/data/common/style.dart';
 import 'package:submission_restaurant/data/models/restaurant_detail.dart';
 import 'package:submission_restaurant/screen/review_restaurant_page.dart';
@@ -38,7 +39,7 @@ class DetailPage extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigation.back(),
         ),
         title: const Text(DetailPage.pageName),
       ),
@@ -128,7 +129,9 @@ class DetailPage extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 220),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                        color: preferencesSettings.isDarkTheme ? darkModeBlackColor : whiteColor,
+                        color: preferencesSettings.isDarkTheme
+                            ? darkModeBlackColor
+                            : whiteColor,
                         borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(24),
                           topLeft: Radius.circular(24),
@@ -260,9 +263,8 @@ class DetailPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(
-                            context, ReviewRestaurantPage.routeName,
-                            arguments: restaurant);
+                        Navigation.intentWithData(
+                            ReviewRestaurantPage.routeName, restaurant);
                       },
                       child: const Text('Beri Review'),
                     ),
